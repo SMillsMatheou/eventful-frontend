@@ -1,32 +1,63 @@
 import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "./axiosInstance";
 
 const login = async (loginData: { emailAddress: string; password: string }) => {
-  const response = await fetch(import.meta.env.VITE_API_URL + "/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(loginData),
-    credentials: "include",
-  });
+  try {
+    const response = await axiosInstance.post("/auth/login", loginData);
 
-  if (!response.ok) {
+    return response.data;
+  } catch (error) {
     throw new Error("Error logging in");
   }
+};
 
-  const result = await response.json();
+const logout = async () => {
+  try {
+    await axiosInstance.post("/auth/logout");
+  } catch (error) {
+    throw new Error("Error logging out");
+  }
+};
 
-  return result;
+const register = async (registerData: {
+  emailAddress: string;
+  password: string;
+  confirmPassword: string;
+  phoneNumber: string;
+  firstName: string;
+  lastName: string;
+}) => {
+  try {
+    const response = await axiosInstance.post("/auth/register", registerData);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Error registering");
+  }
 };
 
 const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onSuccess: () => {},
-    onError: (error) => {
-      console.log(error.message);
-    },
+    onError: () => {},
   });
 };
 
-export default useLogin;
+const useLogout = () => {
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {},
+    onError: () => {},
+  });
+};
+
+const useRegister = () => {
+  return useMutation({
+    mutationFn: register,
+    onSuccess: () => {},
+    onError: () => {},
+  });
+};
+
+export { useLogin, useLogout, useRegister };

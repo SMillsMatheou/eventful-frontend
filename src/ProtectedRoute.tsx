@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import axiosInstance from "./api/axiosInstance";
+import Layout from "./components/layout/layout";
 
 const getAccessToken = async () => {
   try {
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/auth/verify",
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const response = await axiosInstance.get("/auth/verify");
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error("Not authenticated");
     }
 
@@ -48,7 +44,11 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" state={{ from: location }} />;
   }
 
-  return <Outlet />;
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
 };
 
 export default ProtectedRoute;

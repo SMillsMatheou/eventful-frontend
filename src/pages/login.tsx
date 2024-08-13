@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useLogin from "../api/auth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLogin } from "../api/auth";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
   const loginMutation = useLogin();
@@ -40,6 +40,7 @@ function Login() {
         />
         <button type="submit">Login</button>
       </form>
+      <Link to="/register">Don't have an account? Register</Link>
     </div>
   );
 }
