@@ -1,5 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "./axiosInstance";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const login = async (loginData: { emailAddress: string; password: string }) => {
   try {
@@ -45,9 +47,14 @@ const useLogin = () => {
 };
 
 const useLogout = () => {
+  const authContext = useAuth();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: logout,
-    onSuccess: () => {},
+    onSuccess: () => {
+      authContext?.setUser(null);
+      navigate("/login", { replace: true });
+    },
     onError: () => {},
   });
 };

@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { useLogin } from "../api/auth";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
   const loginMutation = useLogin();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   const from = location.state?.from?.pathname || "/";
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,7 +24,8 @@ function Login() {
     loginMutation.mutate(
       { emailAddress: email, password },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setUser(data);
           navigate(from, { replace: true });
         },
       }

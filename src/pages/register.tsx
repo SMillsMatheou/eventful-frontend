@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
+  const { user, setUser } = useAuth();
+
   const registerMutation = useRegister();
   const navigate = useNavigate();
 
@@ -12,6 +15,11 @@ function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  if (user) {
+    navigate("/", { replace: true });
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +49,8 @@ function Register() {
         lastName,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setUser(data);
           navigate("/");
         },
       }

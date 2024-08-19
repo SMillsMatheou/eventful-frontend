@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -26,6 +27,8 @@ axiosInstance.interceptors.response.use(
         }
       } catch (refreshError) {
         const navigate = useNavigate();
+        const { setUser } = useAuth();
+        setUser(null);
         navigate("/login");
       }
     }
